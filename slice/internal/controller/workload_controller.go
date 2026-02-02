@@ -568,6 +568,10 @@ func shouldCreateSlicesForPodSetAssignment(wl *kueue.Workload, psa kueue.PodSetA
 
 func (r *WorkloadReconciler) createSlices(ctx context.Context, wl *kueue.Workload, ac *kueue.AdmissionCheckState, psa *kueue.PodSetAssignment, nodes map[string]corev1.Node, existingSlicesByName map[string]*v1beta1.Slice, desiredNumberOfSlices int32) ([]v1beta1.Slice, error) {
 	parsedAssignment := topology.ParseAssignment(psa.TopologyAssignment, nodes)
+	if err := node.ValidateNodeHealth(ctx, r.client, parsedAssignment, nodes); err != nil {
+		return nil, err
+	}
+
 	ps := podset.FindPodSetByName(wl.Spec.PodSets, psa.Name)
 	chunkSize := int32(len(parsedAssignment.PartitionIds) / int(desiredNumberOfSlices))
 	createdSlices := []v1beta1.Slice{}

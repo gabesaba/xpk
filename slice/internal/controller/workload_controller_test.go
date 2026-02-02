@@ -161,10 +161,10 @@ func TestWorkloadReconciler(t *testing.T) {
 		OwnerWorkloadAnnotations(corev1.NamespaceDefault, baseWorkloadName).
 		PartitionIDs("subblock2")
 
-	worker1Node := utiltesting.MakeNode("worker1").Label(core.TPUSubBlockLabel, "subblock1")
-	worker2Node := utiltesting.MakeNode("worker2").Label(core.TPUSubBlockLabel, "subblock2")
-	worker3Node := utiltesting.MakeNode("worker3").Label(core.TPUSubBlockLabel, "subblock3")
-	worker4Node := utiltesting.MakeNode("worker4").Label(core.TPUSubBlockLabel, "subblock4")
+	worker1Node := utiltesting.MakeNode("worker1").Label(core.TPUSubBlockLabel, "subblock1").Label(core.TPUSliceHealthNodeSelectorKey, core.TPUSliceHealthNodeSelectorHealthy)
+	worker2Node := utiltesting.MakeNode("worker2").Label(core.TPUSubBlockLabel, "subblock2").Label(core.TPUSliceHealthNodeSelectorKey, core.TPUSliceHealthNodeSelectorHealthy)
+	worker3Node := utiltesting.MakeNode("worker3").Label(core.TPUSubBlockLabel, "subblock3").Label(core.TPUSliceHealthNodeSelectorKey, core.TPUSliceHealthNodeSelectorHealthy)
+	worker4Node := utiltesting.MakeNode("worker4").Label(core.TPUSubBlockLabel, "subblock4").Label(core.TPUSliceHealthNodeSelectorKey, core.TPUSliceHealthNodeSelectorHealthy)
 
 	testCases := map[string]struct {
 		interceptorFuncsCreate func(ctx context.Context, client client.WithWatch, obj client.Object, opts ...client.CreateOption) error

@@ -16,10 +16,25 @@ package node
 
 import (
 	"context"
+	"errors"
+	"tpu-slice-controller/internal/core"
+	"tpu-slice-controller/internal/topology"
 
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+func ValidateNodeHealth(ctx context.Context, client client.Client, parsedAssignment topology.ParsedAssignment, nodes map[string]corev1.Node) error {
+	for nodeName, node := range nodes {
+		if !parsedAssignment.NodeNames.Has(nodeName) {
+			continue
+		}
+		if node.GetLabels()[core.TPUSliceHealthNodeSelectorKey] != core.TPUSliceHealthNodeSelectorHealthy {
+			return errors.New("Unhealthy node part of topology assignment")
+		}
+	}
+	return nil
+}
 
 func GetNodes(ctx context.Context, client client.Client) (map[string]corev1.Node, error) {
 	nodes := &corev1.NodeList{}
